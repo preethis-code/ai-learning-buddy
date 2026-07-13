@@ -81,44 +81,6 @@ st.markdown(
     f"""
 <style>
 
-/* STREAMLIT TOP TOOLBAR
-   Hide only the GitHub/source link and keep Share, favorite, edit, and menu visible. */
-[data-testid="stToolbar"] a[href*="github.com"],
-[data-testid="stToolbar"] a[aria-label*="GitHub" i],
-[data-testid="stToolbar"] button[aria-label*="GitHub" i] {
-    display: none !important;
-}
-
-/* Keep all remaining toolbar controls clearly visible in both themes. */
-[data-testid="stToolbar"] {
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-
-[data-testid="stToolbar"] button,
-[data-testid="stToolbar"] a,
-[data-testid="stToolbar"] svg,
-[data-testid="stToolbar"] [role="button"] {
-    visibility: visible !important;
-    opacity: 1 !important;
-    color: {TEXT} !important;
-    fill: currentColor !important;
-}
-
-[data-testid="stToolbar"] button:hover,
-[data-testid="stToolbar"] a:hover,
-[data-testid="stToolbar"] [role="button"]:hover {
-    background: {SURFACE_ALT} !important;
-    border-radius: 8px !important;
-}
-
-/* Make the Share text/button readable. */
-[data-testid="stToolbar"] span,
-[data-testid="stToolbar"] p {
-    color: {TEXT} !important;
-}
-
-
 /* APP */
 .stApp {{
     background:
@@ -581,3 +543,4 @@ render_html("""
     <br>
     Designed & Built by Preethi
 </div>
+""")
