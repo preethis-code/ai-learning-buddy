@@ -80,9 +80,6 @@ else:
 st.markdown(
     f"""
 <style>
-[data-testid="stHeaderActionElements"] {
-    display: none !important;
-}
 /* APP */
 .stApp {{
     background:
