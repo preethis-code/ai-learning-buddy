@@ -15,19 +15,16 @@ st.set_page_config(
 # API SETUP
 # =========================================================
 api_key = st.secrets["GEMINI_API_KEY"]
-
 genai.configure(api_key=api_key)
+
 model = genai.GenerativeModel("gemini-3-flash-preview")
 
 # =========================================================
-# THEME STATE
+# THEME
 # =========================================================
 if "dark_mode" not in st.session_state:
-    st.session_state.dark_mode = True
+    st.session_state.dark_mode = False
 
-# =========================================================
-# SIDEBAR — THEME TOGGLE
-# =========================================================
 with st.sidebar:
     st.markdown("## 🚀 AI Learning Buddy")
 
@@ -39,132 +36,174 @@ with st.sidebar:
     st.session_state.dark_mode = dark_mode
 
 # =========================================================
-# THEME COLORS
+# COLORS
 # =========================================================
 if dark_mode:
-    BG = "#070B14"
-    SIDEBAR = "#0D1424"
+    BG = "#080C16"
+    SIDEBAR = "#0E1525"
     SURFACE = "#111A2D"
     SURFACE_2 = "#172136"
     TEXT = "#F8FAFC"
-    MUTED = "#A9B5CA"
+    MUTED = "#AAB5C8"
     BORDER = "#293652"
-    INPUT = "#111A2D"
-    PLACEHOLDER = "#71809A"
+    INPUT = "#121B2D"
+    PLACEHOLDER = "#8390A5"
     ACCENT = "#7C5CFC"
     ACCENT_2 = "#A78BFA"
-    SHADOW = "rgba(0,0,0,0.25)"
+    HEADER = "#080C16"
 else:
     BG = "#F5F7FC"
     SIDEBAR = "#FFFFFF"
     SURFACE = "#FFFFFF"
-    SURFACE_2 = "#F1F4FA"
+    SURFACE_2 = "#F4F1FF"
     TEXT = "#172033"
     MUTED = "#5F6C80"
     BORDER = "#DCE3EE"
     INPUT = "#FFFFFF"
-    PLACEHOLDER = "#8A96A8"
-    ACCENT = "#6547E8"
-    ACCENT_2 = "#8B6CF6"
-    SHADOW = "rgba(30,41,59,0.08)"
+    PLACEHOLDER = "#7B8798"
+    ACCENT = "#7657F6"
+    ACCENT_2 = "#9B7CFF"
+    HEADER = "#FFFFFF"
 
 # =========================================================
-# CUSTOM CSS
+# CSS
 # =========================================================
 st.markdown(
     f"""
     <style>
 
-    /* MAIN APP */
+    /* ---------- APP ---------- */
+
     .stApp {{
         background:
-            radial-gradient(circle at 85% 5%, {ACCENT}18 0%, transparent 28%),
+            radial-gradient(circle at 90% 5%, {ACCENT}12, transparent 25%),
             {BG};
         color: {TEXT};
     }}
 
-    /* TOP HEADER / TOOLBAR */
+    /* ---------- FIXED STREAMLIT HEADER ---------- */
+
     [data-testid="stHeader"] {{
-        background: {BG} !important;
-        border-bottom: 1px solid {BORDER};
+        background: {HEADER} !important;
+        border-bottom: 1px solid {BORDER} !important;
+        height: 3.5rem !important;
+        z-index: 999 !important;
     }}
 
     [data-testid="stToolbar"] {{
         color: {TEXT} !important;
     }}
 
-    /* SIDEBAR */
+    /* IMPORTANT: PUSH CONTENT BELOW HEADER */
+
+    .block-container {{
+        max-width: 1300px !important;
+        padding-top: 5.5rem !important;
+        padding-bottom: 4rem !important;
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
+    }}
+
+    /* ---------- SIDEBAR ---------- */
+
     [data-testid="stSidebar"] {{
         background: {SIDEBAR} !important;
-        border-right: 1px solid {BORDER};
+        border-right: 1px solid {BORDER} !important;
+    }}
+
+    [data-testid="stSidebar"] > div:first-child {{
+        padding-top: 2rem;
     }}
 
     [data-testid="stSidebar"] * {{
         color: {TEXT};
     }}
 
-    /* GENERAL TEXT */
+    /* ---------- TEXT ---------- */
+
     h1, h2, h3, h4, p, label {{
         color: {TEXT} !important;
     }}
 
-    /* MAIN CONTENT WIDTH */
-    .block-container {{
-        max-width: 1250px;
-        padding-top: 2.5rem;
-        padding-bottom: 3rem;
-    }}
+    /* ---------- HERO ---------- */
 
-    /* HERO */
     .hero {{
+        width: 100%;
+        box-sizing: border-box;
         position: relative;
         overflow: hidden;
-        padding: 42px;
-        margin-bottom: 28px;
-        border-radius: 24px;
+
+        padding: 48px 52px;
+        margin: 0 0 32px 0;
+
+        border-radius: 26px;
         border: 1px solid {BORDER};
+
         background:
-            radial-gradient(circle at 90% 20%, {ACCENT}35 0%, transparent 25%),
-            linear-gradient(135deg, {SURFACE}, {SURFACE_2});
-        box-shadow: 0 15px 45px {SHADOW};
+            radial-gradient(
+                circle at 90% 15%,
+                {ACCENT}25 0%,
+                transparent 30%
+            ),
+            linear-gradient(
+                135deg,
+                {SURFACE},
+                {SURFACE_2}
+            );
+
+        box-shadow: 0 15px 45px rgba(0,0,0,0.08);
     }}
 
     .hero-badge {{
         display: inline-block;
-        padding: 7px 13px;
-        margin-bottom: 15px;
+        padding: 8px 14px;
+        margin-bottom: 28px;
+
         border-radius: 999px;
-        background: {ACCENT}22;
-        color: {ACCENT_2} !important;
+        border: 1px solid {ACCENT}55;
+
+        background: {ACCENT}15;
+        color: {ACCENT} !important;
+
         font-size: 13px;
         font-weight: 700;
-        border: 1px solid {ACCENT}55;
     }}
 
     .hero h1 {{
-        font-size: clamp(36px, 5vw, 58px);
-        line-height: 1.05;
         margin: 0;
-        letter-spacing: -2px;
+        max-width: 750px;
+
+        font-size: clamp(42px, 5vw, 68px);
+        line-height: 1.05;
+        letter-spacing: -3px;
+
+        color: {TEXT} !important;
     }}
 
     .hero p {{
-        max-width: 760px;
+        max-width: 900px;
+        margin: 28px 0 0 0;
+
         color: {MUTED} !important;
         font-size: 18px;
-        line-height: 1.7;
-        margin: 16px 0 0 0;
+        line-height: 1.8;
     }}
 
-    /* FEATURE CARDS */
+    /* ---------- FEATURE CARDS ---------- */
+
     .feature-card {{
-        height: 165px;
-        padding: 24px;
-        border-radius: 18px;
-        border: 1px solid {BORDER};
+        min-height: 175px;
+        box-sizing: border-box;
+
+        padding: 28px;
+        border-radius: 20px;
+
         background: {SURFACE};
-        box-shadow: 0 8px 25px {SHADOW};
-        transition: all 0.25s ease;
+        border: 1px solid {BORDER};
+
+        transition: transform 0.2s ease,
+                    border-color 0.2s ease,
+                    box-shadow 0.2s ease;
     }}
 
     .feature-card:hover {{
@@ -174,28 +213,32 @@ st.markdown(
     }}
 
     .feature-icon {{
-        font-size: 27px;
-        margin-bottom: 10px;
+        font-size: 28px;
+        margin-bottom: 18px;
     }}
 
     .feature-card h3 {{
-        margin: 0 0 8px 0;
-        font-size: 21px;
+        margin: 0 0 10px 0;
+        font-size: 23px;
     }}
 
     .feature-card p {{
+        margin: 0;
         color: {MUTED} !important;
-        line-height: 1.55;
-        font-size: 14px;
+        line-height: 1.6;
+        font-size: 15px;
     }}
 
-    /* TEXT INPUT */
+    /* ---------- INPUT ---------- */
+
     [data-testid="stTextInput"] input {{
         background: {INPUT} !important;
         color: {TEXT} !important;
+
         border: 1px solid {BORDER} !important;
         border-radius: 12px !important;
-        min-height: 50px;
+
+        min-height: 52px !important;
     }}
 
     [data-testid="stTextInput"] input::placeholder {{
@@ -208,10 +251,12 @@ st.markdown(
         box-shadow: 0 0 0 2px {ACCENT}25 !important;
     }}
 
-    /* TEXT AREA */
+    /* ---------- TEXTAREA ---------- */
+
     [data-testid="stTextArea"] textarea {{
         background: {INPUT} !important;
         color: {TEXT} !important;
+
         border: 1px solid {BORDER} !important;
         border-radius: 12px !important;
     }}
@@ -221,20 +266,24 @@ st.markdown(
         opacity: 1 !important;
     }}
 
-    /* SELECT BOX */
+    /* ---------- SELECT BOX ---------- */
+
     [data-baseweb="select"] > div {{
         background: {INPUT} !important;
         color: {TEXT} !important;
+
         border-color: {BORDER} !important;
         border-radius: 12px !important;
-        min-height: 50px;
+
+        min-height: 52px !important;
     }}
 
-    [data-baseweb="select"] span {{
+    [data-baseweb="select"] * {{
         color: {TEXT} !important;
     }}
 
-    /* DROPDOWN MENU */
+    /* ---------- DROPDOWN ---------- */
+
     [data-baseweb="popover"] {{
         background: {SURFACE} !important;
     }}
@@ -253,65 +302,102 @@ st.markdown(
         background: {SURFACE_2} !important;
     }}
 
-    /* BUTTON */
+    /* ---------- BUTTON ---------- */
+
     .stButton > button {{
         width: 100%;
-        min-height: 52px;
-        color: white !important;
-        font-size: 16px;
-        font-weight: 700;
+
+        min-height: 54px;
+        margin-top: 8px;
+
         border: none !important;
-        border-radius: 13px;
-        background: linear-gradient(
-            100deg,
-            {ACCENT},
-            {ACCENT_2}
-        ) !important;
-        transition: all 0.25s ease;
+        border-radius: 13px !important;
+
+        color: white !important;
+
+        font-size: 16px !important;
+        font-weight: 700 !important;
+
+        background:
+            linear-gradient(
+                100deg,
+                {ACCENT},
+                {ACCENT_2}
+            ) !important;
+
+        transition: all 0.2s ease;
     }}
 
     .stButton > button:hover {{
         transform: translateY(-2px);
-        box-shadow: 0 10px 30px {ACCENT}55;
+        box-shadow: 0 10px 30px {ACCENT}45;
     }}
 
-    /* RESPONSE CARD */
-    .response-header {{
-        margin-top: 25px;
-        padding: 20px 24px;
-        background: linear-gradient(
-            135deg,
-            {SURFACE},
-            {ACCENT}15
-        );
+    /* ---------- RESPONSE ---------- */
+
+    .response-box {{
+        margin-top: 28px;
+        padding: 24px;
+
+        border-radius: 18px;
         border: 1px solid {BORDER};
         border-left: 4px solid {ACCENT};
-        border-radius: 16px;
+
+        background:
+            linear-gradient(
+                135deg,
+                {SURFACE},
+                {ACCENT}10
+            );
     }}
 
-    .response-header h3 {{
+    .response-box h3 {{
         margin: 0;
     }}
 
-    /* DIVIDERS */
-    hr {{
-        border-color: {BORDER} !important;
-    }}
+    /* ---------- ALERT ---------- */
 
-    /* ALERTS */
     [data-testid="stAlert"] {{
-        border-radius: 14px;
+        border-radius: 14px !important;
     }}
 
-    /* FOOTER */
+    /* ---------- FOOTER ---------- */
+
     .footer {{
-        margin-top: 50px;
-        padding-top: 25px;
+        margin-top: 60px;
+        padding: 28px 0;
+
         text-align: center;
+
         border-top: 1px solid {BORDER};
+
         color: {MUTED} !important;
         font-size: 14px;
         line-height: 1.8;
+    }}
+
+    /* ---------- MOBILE ---------- */
+
+    @media (max-width: 768px) {{
+
+        .block-container {{
+            padding-top: 5rem !important;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }}
+
+        .hero {{
+            padding: 32px 25px;
+        }}
+
+        .hero h1 {{
+            font-size: 42px;
+            letter-spacing: -2px;
+        }}
+
+        .hero p {{
+            font-size: 16px;
+        }}
     }}
 
     </style>
@@ -326,15 +412,17 @@ PERSONA = """
 You are Preethi, a friendly, patient, and encouraging AI Learning Buddy.
 
 You specialize in helping beginners understand AI in Space Exploration.
-Teach using simple language, clear structure, relatable examples, and
-step-by-step explanations. Encourage curiosity and provide constructive,
-supportive feedback.
+Teach using simple language, clear structure, relatable examples,
+and step-by-step explanations.
+
+Encourage curiosity and provide constructive, supportive feedback.
 """
 
 # =========================================================
-# SIDEBAR CONTENT
+# SIDEBAR
 # =========================================================
 with st.sidebar:
+
     st.divider()
 
     st.markdown("### 🌌 Current Topic")
@@ -343,6 +431,7 @@ with st.sidebar:
     st.divider()
 
     st.markdown("### 🧭 Learning Tools")
+
     st.write("📖 Explain Concepts")
     st.write("🌍 Real-Life Examples")
     st.write("🧠 Generate Quizzes")
@@ -351,7 +440,7 @@ with st.sidebar:
 
     st.divider()
 
-    st.caption("Designed & built by Preethi 🚀")
+    st.caption("Designed & Built by Preethi 🚀")
 
 # =========================================================
 # HERO
@@ -359,13 +448,22 @@ with st.sidebar:
 st.markdown(
     """
     <div class="hero">
-        <div class="hero-badge">✦ YOUR AI-POWERED SPACE LEARNING COMPANION</div>
-        <h1>Explore Space.<br>Learn with AI. 🚀</h1>
+
+        <div class="hero-badge">
+            ✦ YOUR AI-POWERED SPACE LEARNING COMPANION
+        </div>
+
+        <h1>
+            Explore Space.<br>
+            Learn with AI. 🚀
+        </h1>
+
         <p>
             Discover how artificial intelligence helps rovers navigate Mars,
             scientists explore distant worlds, and spacecraft make intelligent
             decisions millions of kilometres from Earth.
         </p>
+
     </div>
     """,
     unsafe_allow_html=True
@@ -374,7 +472,7 @@ st.markdown(
 # =========================================================
 # FEATURE CARDS
 # =========================================================
-col1, col2, col3 = st.columns(3)
+col1, col2, col3 = st.columns(3, gap="medium")
 
 with col1:
     st.markdown(
@@ -382,7 +480,10 @@ with col1:
         <div class="feature-card">
             <div class="feature-icon">🪐</div>
             <h3>Learn</h3>
-            <p>Turn complex AI and space concepts into clear, beginner-friendly explanations.</p>
+            <p>
+                Understand complex AI and space concepts through
+                simple, beginner-friendly explanations.
+            </p>
         </div>
         """,
         unsafe_allow_html=True
@@ -394,7 +495,10 @@ with col2:
         <div class="feature-card">
             <div class="feature-icon">🧠</div>
             <h3>Practice</h3>
-            <p>Generate quizzes instantly and strengthen your understanding of any topic.</p>
+            <p>
+                Generate quizzes instantly and test your understanding
+                of AI in space exploration.
+            </p>
         </div>
         """,
         unsafe_allow_html=True
@@ -406,7 +510,10 @@ with col3:
         <div class="feature-card">
             <div class="feature-icon">✨</div>
             <h3>Improve</h3>
-            <p>Submit your own answers and receive supportive, constructive AI feedback.</p>
+            <p>
+                Submit your answers and receive clear,
+                constructive feedback from your AI Learning Buddy.
+            </p>
         </div>
         """,
         unsafe_allow_html=True
@@ -416,20 +523,21 @@ st.write("")
 st.write("")
 
 # =========================================================
-# LEARNING AREA
+# LEARNING SECTION
 # =========================================================
-st.markdown("## 🌠 Start Your Learning Journey")
+st.markdown("## 🌠 Start Exploring")
+
 st.caption(
     "Choose a learning activity and ask anything about AI in space exploration."
 )
 
 question = st.text_input(
     "What would you like to learn?",
-    placeholder="e.g. How does AI help Mars rovers navigate autonomously?"
+    placeholder="Example: How does AI help Mars rovers navigate?"
 )
 
 activity = st.selectbox(
-    "Choose a learning activity",
+    "Choose a Learning Activity",
     [
         "📖 Explain Concept",
         "🌍 Real-Life Example",
@@ -442,36 +550,43 @@ activity = st.selectbox(
 learner_answer = ""
 
 if activity == "✅ Evaluate My Answer":
+
     learner_answer = st.text_area(
-        "Your answer",
-        placeholder="Type your answer here and receive constructive feedback...",
+        "Enter your answer",
+        placeholder="Type your answer here...",
         height=150
     )
 
 # =========================================================
 # GENERATE RESPONSE
 # =========================================================
-if st.button("✨ Generate Learning Response"):
+if st.button("✨ Generate Response"):
 
     if not question.strip():
-        st.warning("🚀 Enter a question or topic to begin exploring.")
+
+        st.warning(
+            "🚀 Enter a question or topic to begin exploring."
+        )
 
     else:
 
         if activity == "📖 Explain Concept":
+
             prompt = f"""
             {PERSONA}
 
-            Explain this topic: {question}
+            Explain this topic:
+            {question}
 
-            Use simple, beginner-friendly language.
+            Use simple beginner-friendly language.
             Start with a clear definition.
             Break the explanation into easy points.
-            Include a simple analogy when useful.
+            Include a simple analogy if helpful.
             End with a short key takeaway.
             """
 
         elif activity == "🌍 Real-Life Example":
+
             prompt = f"""
             {PERSONA}
 
@@ -479,32 +594,44 @@ if st.button("✨ Generate Learning Response"):
             {question}
 
             Explain step by step how it works,
-            how AI is involved, and why it is useful.
+            how AI is involved,
+            and why it is useful.
             """
 
         elif activity == "🧠 Generate Quiz":
+
             prompt = f"""
             {PERSONA}
 
             Create a 5-question multiple-choice quiz about:
             {question}
 
-            Give four options (A, B, C, D) for each question.
-            Clearly provide the correct answer and a short explanation.
+            Give four options:
+            A, B, C and D.
+
+            Include the correct answer
+            and a short explanation for every question.
             """
 
         elif activity == "💬 Ask Anything":
+
             prompt = f"""
             {PERSONA}
 
-            Answer the learner's question clearly and accurately:
+            Answer this learner's question
+            clearly and accurately:
 
             {question}
             """
 
         else:
+
             if not learner_answer.strip():
-                st.warning("Please enter your answer before requesting feedback.")
+
+                st.warning(
+                    "Please enter your answer before requesting feedback."
+                )
+
                 st.stop()
 
             prompt = f"""
@@ -517,19 +644,25 @@ if st.button("✨ Generate Learning Response"):
             {learner_answer}
 
             Evaluate the answer for correctness and clarity.
-            Explain what the learner did well.
-            Correct any mistakes clearly and kindly.
-            Give one practical suggestion for improvement.
+
+            Explain:
+            1. What was done well.
+            2. Any mistakes that need correction.
+            3. One simple suggestion for improvement.
             """
 
-        with st.spinner("🚀 Your AI Learning Buddy is exploring..."):
+        with st.spinner(
+            "🚀 Your AI Learning Buddy is exploring..."
+        ):
+
             try:
+
                 response = model.generate_content(prompt)
 
                 st.markdown(
                     """
-                    <div class="response-header">
-                        <h3>🤖 Your AI Learning Buddy Says</h3>
+                    <div class="response-box">
+                        <h3>🤖 Your Learning Buddy Says</h3>
                     </div>
                     """,
                     unsafe_allow_html=True
@@ -538,7 +671,10 @@ if st.button("✨ Generate Learning Response"):
                 st.markdown(response.text)
 
             except Exception as e:
-                st.error(f"Something went wrong: {e}")
+
+                st.error(
+                    f"Something went wrong: {e}"
+                )
 
 # =========================================================
 # FOOTER
@@ -546,7 +682,9 @@ if st.button("✨ Generate Learning Response"):
 st.markdown(
     """
     <div class="footer">
-        🚀 <strong>AI Learning Buddy</strong> · AI in Space Exploration<br>
+        🚀 <strong>AI Learning Buddy</strong>
+        · AI in Space Exploration
+        <br>
         Designed & Built by Preethi
     </div>
     """,
