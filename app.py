@@ -1,13 +1,9 @@
 import streamlit as st
 import google.generativeai as genai
-import os
 
-# -------------------- API SETUP --------------------
-api_key = st.secrets["GEMINI_API_KEY"]
-genai.configure(api_key=api_key)
-model = genai.GenerativeModel("gemini-3-flash-preview")
-
-# -------------------- PAGE SETUP --------------------
+# =========================================================
+# PAGE CONFIG
+# =========================================================
 st.set_page_config(
     page_title="AI Learning Buddy",
     page_icon="🚀",
@@ -15,141 +11,307 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# -------------------- THEME --------------------
+# =========================================================
+# API SETUP
+# =========================================================
+api_key = st.secrets["GEMINI_API_KEY"]
+
+genai.configure(api_key=api_key)
+model = genai.GenerativeModel("gemini-3-flash-preview")
+
+# =========================================================
+# THEME STATE
+# =========================================================
 if "dark_mode" not in st.session_state:
     st.session_state.dark_mode = True
 
+# =========================================================
+# SIDEBAR — THEME TOGGLE
+# =========================================================
 with st.sidebar:
-    st.title("🚀 AI Learning Buddy")
+    st.markdown("## 🚀 AI Learning Buddy")
 
     dark_mode = st.toggle(
         "🌙 Dark Mode",
         value=st.session_state.dark_mode
     )
+
     st.session_state.dark_mode = dark_mode
 
-# Theme colors
+# =========================================================
+# THEME COLORS
+# =========================================================
 if dark_mode:
-    bg = "#090D18"
-    card = "#111827"
-    text = "#F8FAFC"
-    secondary = "#94A3B8"
-    border = "#273449"
-    accent = "#7C5CFC"
-    input_bg = "#161D2C"
+    BG = "#070B14"
+    SIDEBAR = "#0D1424"
+    SURFACE = "#111A2D"
+    SURFACE_2 = "#172136"
+    TEXT = "#F8FAFC"
+    MUTED = "#A9B5CA"
+    BORDER = "#293652"
+    INPUT = "#111A2D"
+    PLACEHOLDER = "#71809A"
+    ACCENT = "#7C5CFC"
+    ACCENT_2 = "#A78BFA"
+    SHADOW = "rgba(0,0,0,0.25)"
 else:
-    bg = "#F6F8FC"
-    card = "#FFFFFF"
-    text = "#172033"
-    secondary = "#64748B"
-    border = "#E2E8F0"
-    accent = "#6547E8"
-    input_bg = "#FFFFFF"
+    BG = "#F5F7FC"
+    SIDEBAR = "#FFFFFF"
+    SURFACE = "#FFFFFF"
+    SURFACE_2 = "#F1F4FA"
+    TEXT = "#172033"
+    MUTED = "#5F6C80"
+    BORDER = "#DCE3EE"
+    INPUT = "#FFFFFF"
+    PLACEHOLDER = "#8A96A8"
+    ACCENT = "#6547E8"
+    ACCENT_2 = "#8B6CF6"
+    SHADOW = "rgba(30,41,59,0.08)"
 
-# -------------------- CUSTOM CSS --------------------
+# =========================================================
+# CUSTOM CSS
+# =========================================================
 st.markdown(
     f"""
     <style>
 
+    /* MAIN APP */
     .stApp {{
         background:
-            radial-gradient(circle at 80% 0%, {accent}18 0%, transparent 30%),
-            {bg};
-        color: {text};
+            radial-gradient(circle at 85% 5%, {ACCENT}18 0%, transparent 28%),
+            {BG};
+        color: {TEXT};
     }}
 
+    /* TOP HEADER / TOOLBAR */
+    [data-testid="stHeader"] {{
+        background: {BG} !important;
+        border-bottom: 1px solid {BORDER};
+    }}
+
+    [data-testid="stToolbar"] {{
+        color: {TEXT} !important;
+    }}
+
+    /* SIDEBAR */
     [data-testid="stSidebar"] {{
-        background: {card};
-        border-right: 1px solid {border};
+        background: {SIDEBAR} !important;
+        border-right: 1px solid {BORDER};
     }}
 
-    h1, h2, h3, p, label {{
-        color: {text} !important;
+    [data-testid="stSidebar"] * {{
+        color: {TEXT};
     }}
 
+    /* GENERAL TEXT */
+    h1, h2, h3, h4, p, label {{
+        color: {TEXT} !important;
+    }}
+
+    /* MAIN CONTENT WIDTH */
+    .block-container {{
+        max-width: 1250px;
+        padding-top: 2.5rem;
+        padding-bottom: 3rem;
+    }}
+
+    /* HERO */
     .hero {{
-        padding: 35px 40px;
-        border: 1px solid {border};
-        border-radius: 24px;
-        background: linear-gradient(
-            135deg,
-            {card},
-            {accent}18
-        );
+        position: relative;
+        overflow: hidden;
+        padding: 42px;
         margin-bottom: 28px;
+        border-radius: 24px;
+        border: 1px solid {BORDER};
+        background:
+            radial-gradient(circle at 90% 20%, {ACCENT}35 0%, transparent 25%),
+            linear-gradient(135deg, {SURFACE}, {SURFACE_2});
+        box-shadow: 0 15px 45px {SHADOW};
+    }}
+
+    .hero-badge {{
+        display: inline-block;
+        padding: 7px 13px;
+        margin-bottom: 15px;
+        border-radius: 999px;
+        background: {ACCENT}22;
+        color: {ACCENT_2} !important;
+        font-size: 13px;
+        font-weight: 700;
+        border: 1px solid {ACCENT}55;
     }}
 
     .hero h1 {{
-        font-size: 48px;
+        font-size: clamp(36px, 5vw, 58px);
+        line-height: 1.05;
         margin: 0;
+        letter-spacing: -2px;
     }}
 
     .hero p {{
-        color: {secondary} !important;
+        max-width: 760px;
+        color: {MUTED} !important;
         font-size: 18px;
-        margin-top: 12px;
+        line-height: 1.7;
+        margin: 16px 0 0 0;
     }}
 
+    /* FEATURE CARDS */
     .feature-card {{
-        background: {card};
-        border: 1px solid {border};
-        border-radius: 16px;
-        padding: 18px;
-        min-height: 110px;
-        transition: 0.3s;
+        height: 165px;
+        padding: 24px;
+        border-radius: 18px;
+        border: 1px solid {BORDER};
+        background: {SURFACE};
+        box-shadow: 0 8px 25px {SHADOW};
+        transition: all 0.25s ease;
     }}
 
     .feature-card:hover {{
-        transform: translateY(-3px);
-        border-color: {accent};
+        transform: translateY(-4px);
+        border-color: {ACCENT};
+        box-shadow: 0 15px 35px {ACCENT}18;
+    }}
+
+    .feature-icon {{
+        font-size: 27px;
+        margin-bottom: 10px;
+    }}
+
+    .feature-card h3 {{
+        margin: 0 0 8px 0;
+        font-size: 21px;
     }}
 
     .feature-card p {{
-        color: {secondary} !important;
+        color: {MUTED} !important;
+        line-height: 1.55;
         font-size: 14px;
     }}
 
-    div[data-testid="stTextInput"] input,
-    div[data-testid="stTextArea"] textarea {{
-        background: {input_bg};
-        color: {text};
-        border-radius: 12px;
+    /* TEXT INPUT */
+    [data-testid="stTextInput"] input {{
+        background: {INPUT} !important;
+        color: {TEXT} !important;
+        border: 1px solid {BORDER} !important;
+        border-radius: 12px !important;
+        min-height: 50px;
     }}
 
-    div[data-baseweb="select"] > div {{
-        background: {input_bg};
-        border-radius: 12px;
+    [data-testid="stTextInput"] input::placeholder {{
+        color: {PLACEHOLDER} !important;
+        opacity: 1 !important;
     }}
 
+    [data-testid="stTextInput"] input:focus {{
+        border-color: {ACCENT} !important;
+        box-shadow: 0 0 0 2px {ACCENT}25 !important;
+    }}
+
+    /* TEXT AREA */
+    [data-testid="stTextArea"] textarea {{
+        background: {INPUT} !important;
+        color: {TEXT} !important;
+        border: 1px solid {BORDER} !important;
+        border-radius: 12px !important;
+    }}
+
+    [data-testid="stTextArea"] textarea::placeholder {{
+        color: {PLACEHOLDER} !important;
+        opacity: 1 !important;
+    }}
+
+    /* SELECT BOX */
+    [data-baseweb="select"] > div {{
+        background: {INPUT} !important;
+        color: {TEXT} !important;
+        border-color: {BORDER} !important;
+        border-radius: 12px !important;
+        min-height: 50px;
+    }}
+
+    [data-baseweb="select"] span {{
+        color: {TEXT} !important;
+    }}
+
+    /* DROPDOWN MENU */
+    [data-baseweb="popover"] {{
+        background: {SURFACE} !important;
+    }}
+
+    [role="listbox"] {{
+        background: {SURFACE} !important;
+        border: 1px solid {BORDER} !important;
+    }}
+
+    [role="option"] {{
+        color: {TEXT} !important;
+        background: {SURFACE} !important;
+    }}
+
+    [role="option"]:hover {{
+        background: {SURFACE_2} !important;
+    }}
+
+    /* BUTTON */
     .stButton > button {{
-        background: linear-gradient(90deg, {accent}, #9B7BFF);
+        width: 100%;
+        min-height: 52px;
         color: white !important;
-        border: none;
-        border-radius: 12px;
-        padding: 10px 24px;
-        font-weight: 600;
-        transition: 0.2s;
+        font-size: 16px;
+        font-weight: 700;
+        border: none !important;
+        border-radius: 13px;
+        background: linear-gradient(
+            100deg,
+            {ACCENT},
+            {ACCENT_2}
+        ) !important;
+        transition: all 0.25s ease;
     }}
 
     .stButton > button:hover {{
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px {accent}55;
+        box-shadow: 0 10px 30px {ACCENT}55;
     }}
 
-    .response-box {{
-        background: {card};
-        border: 1px solid {border};
-        border-left: 4px solid {accent};
+    /* RESPONSE CARD */
+    .response-header {{
+        margin-top: 25px;
+        padding: 20px 24px;
+        background: linear-gradient(
+            135deg,
+            {SURFACE},
+            {ACCENT}15
+        );
+        border: 1px solid {BORDER};
+        border-left: 4px solid {ACCENT};
         border-radius: 16px;
-        padding: 25px;
-        margin-top: 20px;
     }}
 
+    .response-header h3 {{
+        margin: 0;
+    }}
+
+    /* DIVIDERS */
+    hr {{
+        border-color: {BORDER} !important;
+    }}
+
+    /* ALERTS */
+    [data-testid="stAlert"] {{
+        border-radius: 14px;
+    }}
+
+    /* FOOTER */
     .footer {{
+        margin-top: 50px;
+        padding-top: 25px;
         text-align: center;
-        color: {secondary};
-        padding: 40px 0 15px 0;
+        border-top: 1px solid {BORDER};
+        color: {MUTED} !important;
         font-size: 14px;
+        line-height: 1.8;
     }}
 
     </style>
@@ -157,53 +319,70 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# -------------------- PERSONA --------------------
+# =========================================================
+# AI PERSONA
+# =========================================================
 PERSONA = """
 You are Preethi, a friendly, patient, and encouraging AI Learning Buddy.
-Teach learners in simple, beginner-friendly language using clear explanations
-and relatable real-life examples. Break complex concepts into easy steps,
-encourage curiosity, and provide constructive feedback.
+
+You specialize in helping beginners understand AI in Space Exploration.
+Teach using simple language, clear structure, relatable examples, and
+step-by-step explanations. Encourage curiosity and provide constructive,
+supportive feedback.
 """
 
-# -------------------- SIDEBAR --------------------
+# =========================================================
+# SIDEBAR CONTENT
+# =========================================================
 with st.sidebar:
     st.divider()
 
-    st.markdown("### 🌌 Topic")
-    st.write("**AI in Space Exploration**")
+    st.markdown("### 🌌 Current Topic")
+    st.markdown("**AI in Space Exploration**")
 
-    st.markdown("### 🧭 Explore")
+    st.divider()
+
+    st.markdown("### 🧭 Learning Tools")
     st.write("📖 Explain Concepts")
     st.write("🌍 Real-Life Examples")
-    st.write("📝 Generate Quizzes")
+    st.write("🧠 Generate Quizzes")
     st.write("💬 Ask Anything")
     st.write("✅ Evaluate Answers")
 
     st.divider()
-    st.caption("Built with 🚀 by Preethi")
 
-# -------------------- HERO --------------------
+    st.caption("Designed & built by Preethi 🚀")
+
+# =========================================================
+# HERO
+# =========================================================
 st.markdown(
     """
     <div class="hero">
-        <h1>🚀 AI in Space Exploration</h1>
+        <div class="hero-badge">✦ YOUR AI-POWERED SPACE LEARNING COMPANION</div>
+        <h1>Explore Space.<br>Learn with AI. 🚀</h1>
         <p>
-        Discover how Artificial Intelligence helps spacecraft,
-        astronauts and scientists explore the universe.
+            Discover how artificial intelligence helps rovers navigate Mars,
+            scientists explore distant worlds, and spacecraft make intelligent
+            decisions millions of kilometres from Earth.
+        </p>
     </div>
     """,
     unsafe_allow_html=True
 )
 
-# -------------------- FEATURE CARDS --------------------
+# =========================================================
+# FEATURE CARDS
+# =========================================================
 col1, col2, col3 = st.columns(3)
 
 with col1:
     st.markdown(
         """
         <div class="feature-card">
-            <h3>🪐 Learn</h3>
-            <p>Understand complex space and AI concepts in simple language.</p>
+            <div class="feature-icon">🪐</div>
+            <h3>Learn</h3>
+            <p>Turn complex AI and space concepts into clear, beginner-friendly explanations.</p>
         </div>
         """,
         unsafe_allow_html=True
@@ -213,8 +392,9 @@ with col2:
     st.markdown(
         """
         <div class="feature-card">
-            <h3>🧠 Practice</h3>
-            <p>Generate quizzes and test your understanding instantly.</p>
+            <div class="feature-icon">🧠</div>
+            <h3>Practice</h3>
+            <p>Generate quizzes instantly and strengthen your understanding of any topic.</p>
         </div>
         """,
         unsafe_allow_html=True
@@ -224,28 +404,36 @@ with col3:
     st.markdown(
         """
         <div class="feature-card">
-            <h3>✨ Improve</h3>
-            <p>Submit your answers and receive constructive AI feedback.</p>
+            <div class="feature-icon">✨</div>
+            <h3>Improve</h3>
+            <p>Submit your own answers and receive supportive, constructive AI feedback.</p>
         </div>
         """,
         unsafe_allow_html=True
     )
 
 st.write("")
-st.markdown("## 🌠 Start Exploring")
+st.write("")
 
-# -------------------- INPUT --------------------
+# =========================================================
+# LEARNING AREA
+# =========================================================
+st.markdown("## 🌠 Start Your Learning Journey")
+st.caption(
+    "Choose a learning activity and ask anything about AI in space exploration."
+)
+
 question = st.text_input(
     "What would you like to learn?",
-    placeholder="Example: How does AI help Mars rovers navigate?"
+    placeholder="e.g. How does AI help Mars rovers navigate autonomously?"
 )
 
 activity = st.selectbox(
-    "Choose a Learning Activity",
+    "Choose a learning activity",
     [
         "📖 Explain Concept",
         "🌍 Real-Life Example",
-        "📝 Generate Quiz",
+        "🧠 Generate Quiz",
         "💬 Ask Anything",
         "✅ Evaluate My Answer"
     ]
@@ -255,74 +443,93 @@ learner_answer = ""
 
 if activity == "✅ Evaluate My Answer":
     learner_answer = st.text_area(
-        "Your Answer",
-        placeholder="Type your answer here..."
+        "Your answer",
+        placeholder="Type your answer here and receive constructive feedback...",
+        height=150
     )
 
-# -------------------- GENERATE --------------------
-if st.button("✨ Generate Response", use_container_width=True):
+# =========================================================
+# GENERATE RESPONSE
+# =========================================================
+if st.button("✨ Generate Learning Response"):
 
-    if not question:
-        st.warning("Please enter a question or topic.")
+    if not question.strip():
+        st.warning("🚀 Enter a question or topic to begin exploring.")
 
     else:
 
         if activity == "📖 Explain Concept":
             prompt = f"""
             {PERSONA}
-            Explain {question} in simple, beginner-friendly language.
-            Start with a clear definition, break it into easy points,
-            give a simple analogy if helpful, and end with a short summary.
+
+            Explain this topic: {question}
+
+            Use simple, beginner-friendly language.
+            Start with a clear definition.
+            Break the explanation into easy points.
+            Include a simple analogy when useful.
+            End with a short key takeaway.
             """
 
         elif activity == "🌍 Real-Life Example":
             prompt = f"""
             {PERSONA}
-            Give one clear real-life example related to {question}.
-            Explain step by step how it works and why it is useful.
+
+            Give one clear real-world example related to:
+            {question}
+
+            Explain step by step how it works,
+            how AI is involved, and why it is useful.
             """
 
-        elif activity == "📝 Generate Quiz":
+        elif activity == "🧠 Generate Quiz":
             prompt = f"""
             {PERSONA}
-            Create a 5-question multiple-choice quiz about {question}.
+
+            Create a 5-question multiple-choice quiz about:
+            {question}
+
             Give four options (A, B, C, D) for each question.
-            Include the correct answer and a brief explanation.
+            Clearly provide the correct answer and a short explanation.
             """
 
         elif activity == "💬 Ask Anything":
             prompt = f"""
             {PERSONA}
-            Answer this learner's question clearly and accurately:
+
+            Answer the learner's question clearly and accurately:
+
             {question}
             """
 
         else:
-            if not learner_answer:
-                st.warning("Please enter your answer.")
+            if not learner_answer.strip():
+                st.warning("Please enter your answer before requesting feedback.")
                 st.stop()
 
             prompt = f"""
             {PERSONA}
 
-            Question or topic: {question}
-            Learner's answer: {learner_answer}
+            Question or topic:
+            {question}
+
+            Learner's answer:
+            {learner_answer}
 
             Evaluate the answer for correctness and clarity.
-            Explain what was done well, correct any mistakes,
-            and give one simple suggestion for improvement.
+            Explain what the learner did well.
+            Correct any mistakes clearly and kindly.
+            Give one practical suggestion for improvement.
             """
 
-        with st.spinner("🚀 Exploring the universe..."):
+        with st.spinner("🚀 Your AI Learning Buddy is exploring..."):
             try:
                 response = model.generate_content(prompt)
 
-                st.success("Response generated successfully!")
-
                 st.markdown(
                     """
-                    <div class="response-box">
-                    <h3>🤖 Your AI Learning Buddy Says</h3>
+                    <div class="response-header">
+                        <h3>🤖 Your AI Learning Buddy Says</h3>
                     </div>
                     """,
                     unsafe_allow_html=True
@@ -333,11 +540,13 @@ if st.button("✨ Generate Response", use_container_width=True):
             except Exception as e:
                 st.error(f"Something went wrong: {e}")
 
-# -------------------- FOOTER --------------------
+# =========================================================
+# FOOTER
+# =========================================================
 st.markdown(
     """
     <div class="footer">
-        🚀 AI Learning Buddy • AI in Space Exploration<br>
+        🚀 <strong>AI Learning Buddy</strong> · AI in Space Exploration<br>
         Designed & Built by Preethi
     </div>
     """,
