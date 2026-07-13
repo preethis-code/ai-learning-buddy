@@ -77,6 +77,9 @@ else:
 # =========================================================
 # CSS
 # =========================================================
+[data-testid="stHeaderActionElements"] {
+    display: none !important;
+}
 st.markdown(
     f"""
 <style>
